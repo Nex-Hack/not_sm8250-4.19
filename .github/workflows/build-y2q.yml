@@ -1,4 +1,4 @@
-name: build not-kernel CI variant
+name: build not-kernel CI sm8250
 
 on:
   push:
@@ -51,7 +51,7 @@ jobs:
           echo "BUILD_DURATION=${minutes}m ${seconds}s" >> $GITHUB_ENV
 
       - name: Upload ROM Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: Not_kernel_${{ matrix.device }}
           path: |
