@@ -1,8 +1,9 @@
-name: build not-kernel CI variant
+
+name: build not-kernel CI For y2q
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "keep-saved" ]
   workflow_dispatch:
 
 jobs:
@@ -14,8 +15,8 @@ jobs:
         device: [y2q]
 
     env:
-      DEVICE_NAME: Galaxy S20 Series   # you can adjust per device if needed
-      KERNEL_NAME: not_kernel
+      DEVICE_NAME: Galaxy S20+
+      KERNEL_NAME: Not_Kernel_Silicium
 
     steps:
       - name: Check Out
@@ -51,9 +52,9 @@ jobs:
           echo "BUILD_DURATION=${minutes}m ${seconds}s" >> $GITHUB_ENV
 
       - name: Upload ROM Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
-          name: Not_kernel_${{ matrix.device }}
+          name: Not_Kernel_Silicium${{ matrix.device }}
           path: |
             out/*.zip
             *.zip
