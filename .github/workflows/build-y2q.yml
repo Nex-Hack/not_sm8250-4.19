@@ -14,7 +14,7 @@ jobs:
         device: [y2q]
 
     env:
-      DEVICE_NAME: Galaxy S20 Series   # you can adjust per device if needed
+      DEVICE_NAME: Galaxy S20 Series
       KERNEL_NAME: not_kernel
 
     steps:
@@ -29,7 +29,7 @@ jobs:
       - name: Setting up the environment
         run: |
           sudo apt-get update -y
-          sudo apt-get install -y gcc-aarch64-linux-gnu
+          sudo apt-get install -y gcc-aarch64-linux-gnu bc flex bison libssl-dev libncurses5-dev zip clang lld
 
       - name: Set Build Start Time
         run: echo "START_TIME=$(date +%s)" >> $GITHUB_ENV
@@ -39,6 +39,17 @@ jobs:
 
       - name: Run build script
         run: ./build-${{ matrix.device }}.sh
+
+      # 🔹 New step: Verify kernel config
+      - name: Check FUSE_BPF status
+        run: |
+          if grep -q "CONFIG_FUSE_BPF=y" out/.config; then
+            echo "FUSE_BPF is enabled! Disabling..."
+            scripts/config --file out/.config --disable FUSE_BPF
+            make O=out ARCH=arm64 olddefconfig
+          else
+            echo "FUSE_BPF already disabled."
+          fi
 
       - name: Set Build End Time
         run: echo "END_TIME=$(date +%s)" >> $GITHUB_ENV
@@ -50,7 +61,7 @@ jobs:
           seconds=$((duration % 60))
           echo "BUILD_DURATION=${minutes}m ${seconds}s" >> $GITHUB_ENV
 
-      - name: Upload ROM Artifact
+      - name: Upload Kernel Artifact
         uses: actions/upload-artifact@v5
         with:
           name: Not_kernel_${{ matrix.device }}
