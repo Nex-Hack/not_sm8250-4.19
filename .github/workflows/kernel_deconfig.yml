@@ -1,3 +1,0 @@
-- name: Check kernel config
-  run: |
-    grep FUSE_BPF out/.config || echo "FUSE_BPF not found in config"
